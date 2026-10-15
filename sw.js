@@ -1,4 +1,4 @@
-const CACHE='save-cash-v2.2.1';
+const CACHE='save-cash-v2.3.0';
 const ASSETS=['./','./index.html','./model.js','./storage.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS.map(url=>new Request(url,{cache:'reload'}))))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('save-cash-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
