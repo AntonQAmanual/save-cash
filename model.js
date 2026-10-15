@@ -11,7 +11,7 @@ function cibus(d){const days=Math.max(0,Math.trunc(d.cibusDays)),n50=Math.min(da
 function lessonShares(amount){const all=Math.max(0,cents(amount));const father=Math.min(all,Math.ceil((all+10000)/20000)*10000);return {father:money(father),mother:money(all-father)};}
 function compensation(d){const bills=(d.lessonBills||[]).filter(x=>x.subject==='hebrew');return bills.length?money(bills.filter(x=>inPeriod(d,x.compensation_date)).reduce((s,x)=>s+cents(lessonShares(x.total).mother),0)):Number(d.hebrewOffset||0);}
 function lessonPayments(d){return (d.lessonBills||[]).flatMap(b=>b.payments.map(p=>({...p,bill_id:b.id,name:b.subject==='hebrew'?'Иврит':'Математика'})));}
-function alimony(d){return money(cents(d.childSupport)+cents(total(d.extra))-cents(compensation(d)));}
+function alimony(d){return money(Math.max(0,cents(d.childSupport)+cents(total(d.extra))-cents(compensation(d))));}
 const child=d=>money(cents(alimony(d))+cents(total(lessonPayments(d).filter(p=>future(d,p.charge_date))))+(!(d.lessonBills||[]).some(b=>b.subject==='math')?cents(d.math):0));
 const remaining=x=>money(Math.max(0,x.payment_count-x.payment_index)*cents(x.amount_per_payment));
 function excluded(x){return x.is_test===true||x.date==='2026-10-10'&&cents(x.amount)===100;}
@@ -25,7 +25,7 @@ add('credit периода · сумма выписки',d.statementTotal,'10002
 for(const [name,key,date]of [['Аренда','rent',d.rentDate],['Платёж по кредиту','loan',d.loanDate]])if(key!=='loan'||d.loanActive)add(name,d[key],'PROJECT_HISTORY_AND_SPEC.md','Счёт',date,!future(d,date),key==='loan'?'Последний платёж':'Прогноз даты','direct');
 add('Алименты к перечислению',alimony(d),'Основные алименты + доп. расходы − доля мамы за иврит','Счёт',d.childDate,!future(d,d.childDate),'Прогноз','direct');
 if(!(d.lessonBills||[]).some(b=>b.subject==='math')&&d.math)add('Математика',d.math,'Прежняя сумма расходов на математику','Счёт',d.childDate,!future(d,d.childDate),'Прогноз','lesson');
-for(const p of lessonPayments(d))add(p.name+' · оплата преподавателю',p.amount,'Счёт за уроки',p.method,p.charge_date,!future(d,p.charge_date)||(p.method!=='Счёт'&&!!p.included_in_statement),'По счёту за уроки','lesson');
+for(const p of lessonPayments(d))add(p.name+' · оплата преподавателю',p.amount,'Счёт за уроки',p.method,p.charge_date,!future(d,p.charge_date)||(p.method!=='Счёт'&&(!!p.included_in_statement||unique(d.purchases).some(x=>x.lesson_payment_id===p.id&&(x.included_in_statement||['Включено в выписку','Списано со счёта'].includes(x.status))))),'По счёту за уроки','lesson');
 add('Cibus',cibus(d).amount,'Расчёт рабочих дней','Ашрай',d.statementDate,d.cibusIncluded||!future(d,d.statementDate),'Прогноз','component');
 for(const x of d.subs){const matched=unique(d.purchases).some(p=>p.recurring_id===x.id);const date=x.expected_charge_date||d.statementDate;add(x.name,x.amount,x.source||'Ручной ввод',x.method||'Ашрай',date,!!x.included_in_statement||matched||!future(d,date),x.status||'Прогноз','component','Ориентировочно '+(x.day||'—')+'-е');}
 for(const x of d.installments)if(x.active){const matched=unique(d.purchases).some(p=>p.installment_id===x.id||x.transaction_id===p.id);add(x.merchant,x.amount_per_payment,x.source,'Ашрай',x.expected_charge_date,!!x.included_in_statement||!future(d,x.expected_charge_date),x.status,'installment',x.purchase_date||'Не подтверждена');}
