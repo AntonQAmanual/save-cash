@@ -1,0 +1,2 @@
+import fs from 'node:fs/promises';import crypto from 'node:crypto';
+const hashes=JSON.parse(await fs.readFile(new URL('../runtime-integrity.json',import.meta.url)));for(const [file,expected]of Object.entries(hashes)){const bytes=await fs.readFile(new URL('../'+file,import.meta.url));if(crypto.createHash('sha256').update(bytes).digest('hex')!==expected)throw Error('Runtime integrity mismatch: '+file)}console.log('Verified '+Object.keys(hashes).length+' runtime assets against RC1');
