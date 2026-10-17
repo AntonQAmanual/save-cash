@@ -3,7 +3,7 @@
 Application code © 2026 Anton Koval. Third-party assets retain their own licenses:
 
 - Tesseract.js 7.0.0 and matching tesseract.js-core: Apache-2.0; npm package-lock pins runtime packages.
-- Hebrew and English `tessdata_fast` trained models: Apache-2.0. Vendored from official tesseract-ocr/tessdata_fast; SHA-256 of committed files is the authoritative build content.
+- Hebrew, English and Russian `tessdata_fast` trained models: Apache-2.0. Vendored from official tesseract-ocr/tessdata_fast; SHA-256 of committed files is the authoritative build content.
 - PDF.js / pdfjs-dist 6.4.299: Apache-2.0. Includes standard fonts and packed character maps distributed by that package.
 - SheetJS CE 0.20.3: Apache-2.0; official versioned standalone build.
 - fflate 0.8.3: MIT.
