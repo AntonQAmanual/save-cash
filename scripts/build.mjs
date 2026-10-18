@@ -1,10 +1,10 @@
 import fs from 'node:fs/promises';import path from 'node:path';import vm from 'node:vm';import crypto from 'node:crypto';
 const root=path.resolve(new URL('../',import.meta.url).pathname),out=path.join(root,'.build/dist');await fs.rm(out,{recursive:true,force:true});await fs.mkdir(out,{recursive:true});
-const files=['features.js','features-ui.js','responsive-check.html','compat.js','translation.js','pdf-worker.mjs','index.html','app.js','model.js','storage.js','documents.js','backup.js','validation.js','reconciliation.js','enhancements.css','manifest.webmanifest','icon-192.png','icon-512.png'];
+const files=['calendar.js','archive.js','package-ui.js','features.js','features-ui.js','responsive-check.html','compat.js','translation.js','pdf-worker.mjs','index.html','app.js','model.js','storage.js','documents.js','backup.js','validation.js','reconciliation.js','enhancements.css','manifest.webmanifest','icon-192.png','icon-512.png'];
 async function walk(dir){let a=[];for(const x of await fs.readdir(path.join(root,dir),{withFileTypes:true}))a.push(...x.isDirectory()?await walk(dir+'/'+x.name):[dir+'/'+x.name]);return a}files.push(...await walk('vendor'));
 for(const f of files){const src=await fs.readFile(path.join(root,f));if(f.endsWith('.js')&&!f.startsWith('vendor/'))new vm.Script(src.toString(),{filename:f});await fs.mkdir(path.dirname(path.join(out,f)),{recursive:true});await fs.writeFile(path.join(out,f),src)}
 const manifest=JSON.parse(await fs.readFile(path.join(root,'manifest.webmanifest'),'utf8'));if(manifest.display!=='standalone'||manifest.scope!=='./')throw Error('Invalid PWA manifest');
-const hash=crypto.createHash('sha256');for(const f of files)hash.update(await fs.readFile(path.join(root,f)));const version='3.0.0-rc.4.2-'+hash.digest('hex').slice(0,10),assets=['./',...files.map(x=>'./'+x)];
+const hash=crypto.createHash('sha256');for(const f of files)hash.update(await fs.readFile(path.join(root,f)));const version='3.0.0-rc.5-'+hash.digest('hex').slice(0,10),assets=['./',...files.map(x=>'./'+x)];
 const sw=`const CACHE=${JSON.stringify('save-cash-'+version)};const ASSETS=${JSON.stringify(assets)};
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS.map(url=>new Request(url,{cache:'reload'}))))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('save-cash-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

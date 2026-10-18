@@ -1,3 +1,7 @@
+## RC5 closed package 01 — 18 October 2026
+
+159 tests pass, zero failures. See CLOSED_PACKAGE_01.md for implementation, validation and limits. The original package contained a full Word specification, matching TXT body and 49 images. Its historical source ZIP was read for specification only; no old app was restored. Backup branch: backup/pre-package01-20261018 at the prior published RC4.2 head.
+
 # Save Cash 3.0 RC4.2 — банковский календарь и маркеры, 18.10.2026
 
 Основа: опубликованная RC4.1, commit 31e125232cd86f51df42b153b02b95d97e3d88ea. Резервная ветка backup/pre-rc4-2-2026-10-18 и полная Git-копия сохранены. Дизайн и ранее рабочие функции сохранены.
