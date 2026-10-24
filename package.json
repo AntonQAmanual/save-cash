@@ -1,6 +1,6 @@
 {
   "name": "save-cash",
-  "version": "3.0.0-rc.7",
+  "version": "3.0.0-rc.8",
   "private": true,
   "scripts": {
     "test": "node --test model.test.cjs tests/*.test.cjs",
